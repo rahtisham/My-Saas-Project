@@ -19,6 +19,12 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property string $slug
  * @property bool $is_personal
+ * @property string|null $industry
+ * @property string|null $website
+ * @property string|null $logo_path
+ * @property string $timezone
+ * @property string|null $country
+ * @property string $plan
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -27,7 +33,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, User> $members
  * @property-read Collection<int, Product> $products
  */
-#[Fillable(['name', 'slug', 'is_personal'])]
+#[Fillable(['name', 'slug', 'is_personal', 'industry', 'website', 'logo_path', 'timezone', 'country', 'plan'])]
 class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */

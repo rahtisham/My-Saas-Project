@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\TeamRole;
+use App\Enums\TeamPermission;
 use App\Models\Product;
 use App\Models\Team;
 use App\Models\User;
@@ -22,7 +22,7 @@ class ProductPolicy
      */
     public function create(User $user, Team $team): bool
     {
-        return $user->teamRole($team)?->isAtLeast(TeamRole::Admin) ?? false;
+        return $user->hasTeamPermission($team, TeamPermission::ManageProducts);
     }
 
     /**
@@ -32,7 +32,7 @@ class ProductPolicy
     {
         $team = $product->team()->withTrashed()->first();
 
-        return $user->teamRole($team)?->isAtLeast(TeamRole::Admin) ?? false;
+        return $user->hasTeamPermission($team, TeamPermission::ManageProducts);
     }
 
     /**
@@ -42,6 +42,6 @@ class ProductPolicy
     {
         $team = $product->team()->withTrashed()->first();
 
-        return $user->teamRole($team)?->isAtLeast(TeamRole::Admin) ?? false;
+        return $user->hasTeamPermission($team, TeamPermission::ManageProducts);
     }
 }

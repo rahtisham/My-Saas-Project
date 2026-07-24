@@ -27,10 +27,16 @@ enum TeamRole: string
             self::Owner => TeamPermission::cases(),
             self::Admin => [
                 TeamPermission::UpdateTeam,
+                TeamPermission::AddMember,
+                TeamPermission::UpdateMember,
+                TeamPermission::RemoveMember,
                 TeamPermission::CreateInvitation,
                 TeamPermission::CancelInvitation,
+                TeamPermission::ManageProducts,
             ],
-            self::Member => [],
+            self::Member => [
+                TeamPermission::ManageProducts,
+            ],
         };
     }
 
@@ -75,5 +81,17 @@ enum TeamRole: string
             ->map(fn (self $role) => ['value' => $role->value, 'label' => $role->label()])
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Get a human-readable description of what this role can do.
+     */
+    public function description(): string
+    {
+        return match ($this) {
+            self::Owner => 'Full access. Can manage the company, billing, members, products, and delete the account.',
+            self::Admin => 'Can manage members, products, and team settings. Cannot delete the company or manage billing.',
+            self::Member => 'Can manage products. Cannot change team settings or manage other members.',
+        };
     }
 }

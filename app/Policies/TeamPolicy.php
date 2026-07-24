@@ -97,4 +97,12 @@ class TeamPolicy
     {
         return ! $team->is_personal && $user->hasTeamPermission($team, TeamPermission::DeleteTeam);
     }
+
+    /**
+     * Determine whether the user can manage company settings (profile, logo, industry etc).
+     */
+    public function manageCompany(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ManageCompany);
+    }
 }
