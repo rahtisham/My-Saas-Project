@@ -47,6 +47,15 @@ return [
             'report' => false,
         ],
 
+        'social' => [
+            'driver' => 'local',
+            'root' => storage_path('app/social-media'),
+            'url' => rtrim((string) env('APP_URL', 'http://localhost'), '/').'/storage/social',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

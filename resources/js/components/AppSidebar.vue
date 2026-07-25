@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, Package } from '@lucide/vue';
+import { BookOpen, FolderGit2, LayoutGrid, Megaphone, Package } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as productsIndex } from '@/routes/products';
+import { dashboard as socialDashboard } from '@/routes/social';
 import type { NavItem } from '@/types';
 
 const page = usePage();
@@ -30,6 +31,10 @@ const productsUrl = computed(() =>
     page.props.currentTeam ? productsIndex(page.props.currentTeam.slug).url : '/',
 );
 
+const socialUrl = computed(() =>
+    page.props.currentTeam ? socialDashboard(page.props.currentTeam.slug).url : '/',
+);
+
 const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
@@ -40,6 +45,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Products',
         href: productsUrl.value,
         icon: Package,
+    },
+    {
+        title: 'Social Media',
+        href: socialUrl.value,
+        icon: Megaphone,
     },
 ]);
 

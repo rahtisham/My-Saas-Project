@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -32,6 +33,11 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Membership> $memberships
  * @property-read Collection<int, User> $members
  * @property-read Collection<int, Product> $products
+ * @property-read Collection<int, SocialAccount> $socialAccounts
+ * @property-read Collection<int, SocialPost> $socialPosts
+ * @property-read Collection<int, SocialMedia> $socialMedia
+ * @property-read Collection<int, SocialCampaign> $socialCampaigns
+ * @property-read Collection<int, SocialNotification> $socialNotifications
  */
 #[Fillable(['name', 'slug', 'is_personal', 'industry', 'website', 'logo_path', 'timezone', 'country', 'plan'])]
 class Team extends Model
@@ -110,6 +116,56 @@ class Team extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Get all social accounts for this team.
+     *
+     * @return HasMany<SocialAccount, $this>
+     */
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    /**
+     * Get all social posts for this team.
+     *
+     * @return HasMany<SocialPost, $this>
+     */
+    public function socialPosts(): HasMany
+    {
+        return $this->hasMany(SocialPost::class);
+    }
+
+    /**
+     * Get all social media for this team.
+     *
+     * @return HasMany<SocialMedia, $this>
+     */
+    public function socialMedia(): HasMany
+    {
+        return $this->hasMany(SocialMedia::class);
+    }
+
+    /**
+     * Get all social campaigns for this team.
+     *
+     * @return HasMany<SocialCampaign, $this>
+     */
+    public function socialCampaigns(): HasMany
+    {
+        return $this->hasMany(SocialCampaign::class);
+    }
+
+    /**
+     * Get all social notifications for this team's members.
+     *
+     * @return HasManyThrough<SocialNotification, Membership>
+     */
+    public function socialNotifications(): HasManyThrough
+    {
+        return $this->hasManyThrough(SocialNotification::class, Membership::class, 'team_id', 'user_id', 'id', 'user_id');
     }
 
     /**

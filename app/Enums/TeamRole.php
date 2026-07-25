@@ -33,9 +33,14 @@ enum TeamRole: string
                 TeamPermission::CreateInvitation,
                 TeamPermission::CancelInvitation,
                 TeamPermission::ManageProducts,
+                TeamPermission::ManageSocialMedia,
+                TeamPermission::PublishSocialPosts,
+                TeamPermission::ManageCampaigns,
             ],
             self::Member => [
                 TeamPermission::ManageProducts,
+                TeamPermission::ManageSocialMedia,
+                TeamPermission::PublishSocialPosts,
             ],
         };
     }

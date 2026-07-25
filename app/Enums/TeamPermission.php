@@ -16,4 +16,8 @@ enum TeamPermission: string
 
     case ManageProducts = 'product:manage';
     case ManageCompany = 'company:manage';
+
+    case ManageSocialMedia = 'social:manage';
+    case PublishSocialPosts = 'social:publish';
+    case ManageCampaigns = 'social:campaigns';
 }
