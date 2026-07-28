@@ -75,6 +75,38 @@ class FacebookService
     }
 
     /**
+     * Upload a file via multipart POST to the Facebook Graph API.
+     *
+     * @return array<string, mixed>
+     */
+    public function upload(string $endpoint, SocialAccount $account, string $filePath, string $fieldName, array $data = []): array
+    {
+        $data['access_token'] = $account->access_token;
+
+        $fileSize = filesize($filePath);
+        $timeout = $fileSize > 10 * 1024 * 1024 ? 300 : 120;
+
+        $response = Http::timeout($timeout)
+            ->attach(
+                $fieldName,
+                file_get_contents($filePath),
+                basename($filePath)
+            )->post("{$this->baseUrl}/{$endpoint}", $data);
+
+        if ($response->failed()) {
+            Log::error('Facebook API upload failed', [
+                'endpoint' => $endpoint,
+                'status' => $response->status(),
+                'response' => $response->json(),
+            ]);
+
+            throw new \RuntimeException('Facebook API upload failed: '.$response->json('error.message', 'Unknown error'));
+        }
+
+        return $response->json();
+    }
+
+    /**
      * Make a DELETE request to the Facebook Graph API.
      *
      * @return array<string, mixed>

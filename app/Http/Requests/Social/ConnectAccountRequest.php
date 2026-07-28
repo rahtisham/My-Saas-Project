@@ -18,6 +18,7 @@ class ConnectAccountRequest extends FormRequest
             'platform' => ['required', 'string', 'in:facebook,instagram'],
             'name' => ['required', 'string', 'max:255'],
             'page_id' => ['required', 'string', 'max:255'],
+            'instagram_account_id' => ['nullable', 'string', 'max:255'],
             'access_token' => ['required', 'string', 'max:2048'],
         ];
     }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { Bell, CheckCheck } from '@lucide/vue';
+import { Bell, CheckCheck, CheckCircle2, XCircle, Play, AlertTriangle } from '@lucide/vue';
 import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -69,15 +69,15 @@ const typeColor = (type: string) => {
 const typeIcon = (type: string) => {
     switch (type) {
         case 'post_published':
-            return '✓';
+            return CheckCircle2;
         case 'post_failed':
-            return '✕';
+            return XCircle;
         case 'campaign_started':
-            return '▶';
+            return Play;
         case 'campaign_failed':
-            return '✕';
+            return XCircle;
         default:
-            return '!';
+            return AlertTriangle;
     }
 };
 
@@ -94,7 +94,7 @@ defineOptions({
 <template>
     <Head title="Notifications" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 p-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
@@ -141,11 +141,11 @@ defineOptions({
                     >
                         <div
                             :class="[
-                                'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold',
+                                'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
                                 typeColor(notification.type),
                             ]"
                         >
-                            {{ typeIcon(notification.type) }}
+                            <component :is="typeIcon(notification.type)" class="h-4 w-4" />
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2">

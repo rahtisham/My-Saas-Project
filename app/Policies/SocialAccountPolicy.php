@@ -26,6 +26,16 @@ class SocialAccountPolicy
     }
 
     /**
+     * Determine if the user can update the given social account.
+     */
+    public function update(User $user, SocialAccount $account): bool
+    {
+        $team = $account->team;
+
+        return $user->hasTeamPermission($team, TeamPermission::ManageSocialMedia);
+    }
+
+    /**
      * Determine if the user can delete the given social account.
      */
     public function delete(User $user, SocialAccount $account): bool

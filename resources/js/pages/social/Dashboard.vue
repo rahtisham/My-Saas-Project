@@ -9,6 +9,10 @@ import {
     Bell,
     Users,
     ArrowRight,
+    Calendar,
+    CheckCircle2,
+    AlertTriangle,
+    Clock,
 } from '@lucide/vue';
 import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
@@ -77,7 +81,7 @@ defineOptions({
 <template>
     <Head title="Social Media Dashboard" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 p-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
@@ -111,7 +115,7 @@ defineOptions({
                             <p class="text-sm text-muted-foreground">Total Posts</p>
                             <p class="text-2xl font-bold">{{ stats.totalPosts }}</p>
                         </div>
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
                             <Send class="h-5 w-5 text-primary" />
                         </div>
                     </div>
@@ -123,10 +127,10 @@ defineOptions({
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">Published</p>
-                            <p class="text-2xl font-bold">{{ stats.publishedPosts }}</p>
+                            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ stats.publishedPosts }}</p>
                         </div>
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
-                            <Send class="h-5 w-5 text-green-600 dark:text-green-400" />
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/20">
+                            <CheckCircle2 class="h-5 w-5 text-green-600 dark:text-green-400" />
                         </div>
                     </div>
                 </CardContent>
@@ -137,10 +141,10 @@ defineOptions({
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">Scheduled</p>
-                            <p class="text-2xl font-bold">{{ stats.scheduledPosts }}</p>
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ stats.scheduledPosts }}</p>
                         </div>
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/20">
-                            <FileVideo class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/20">
+                            <Clock class="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </div>
                     </div>
                 </CardContent>
@@ -151,10 +155,10 @@ defineOptions({
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-muted-foreground">Failed</p>
-                            <p class="text-2xl font-bold">{{ stats.failedPosts }}</p>
+                            <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ stats.failedPosts }}</p>
                         </div>
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-                            <Bell class="h-5 w-5 text-red-600 dark:text-red-400" />
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/20">
+                            <AlertTriangle class="h-5 w-5 text-red-600 dark:text-red-400" />
                         </div>
                     </div>
                 </CardContent>
@@ -167,7 +171,9 @@ defineOptions({
                 <Link :href="`/${teamSlug}/social/media`" class="block hover:bg-muted/50 transition-colors">
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
-                            <Image class="h-5 w-5" />
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/20">
+                                <Image class="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                            </div>
                             Media Library
                         </CardTitle>
                         <CardDescription>{{ stats.totalMedia }} files uploaded</CardDescription>
@@ -185,7 +191,9 @@ defineOptions({
                 <Link :href="`/${teamSlug}/social/campaigns`" class="block hover:bg-muted/50 transition-colors">
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
-                            <Megaphone class="h-5 w-5" />
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/20">
+                                <Megaphone class="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                            </div>
                             Campaigns
                         </CardTitle>
                         <CardDescription>{{ stats.activeCampaigns }} active campaigns</CardDescription>
@@ -203,7 +211,9 @@ defineOptions({
                 <Link :href="`/${teamSlug}/social/notifications`" class="block hover:bg-muted/50 transition-colors">
                     <CardHeader>
                         <CardTitle class="flex items-center gap-2">
-                            <Bell class="h-5 w-5" />
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/20">
+                                <Bell class="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                            </div>
                             Notifications
                         </CardTitle>
                         <CardDescription>Stay updated on your posts</CardDescription>
@@ -220,20 +230,29 @@ defineOptions({
 
         <!-- Recent Posts -->
         <Card>
-            <CardHeader>
-                <CardTitle>Recent Posts</CardTitle>
-                <CardDescription>Your latest social media posts</CardDescription>
+            <CardHeader class="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Recent Posts</CardTitle>
+                    <CardDescription>Your latest social media posts</CardDescription>
+                </div>
+                <Button as-child variant="ghost" size="sm">
+                    <Link :href="`/${teamSlug}/social/posts`">
+                        View all
+                        <ArrowRight class="ml-2 h-4 w-4" />
+                    </Link>
+                </Button>
             </CardHeader>
             <CardContent>
                 <div v-if="recentPosts.length === 0" class="flex flex-col items-center justify-center py-8 text-center">
                     <Send class="mb-4 h-8 w-8 text-muted-foreground" />
                     <p class="text-sm text-muted-foreground">No posts yet. Create your first post!</p>
                 </div>
-                <div v-else class="space-y-3">
-                    <div
+                <div v-else class="space-y-2">
+                    <Link
                         v-for="post in recentPosts"
                         :key="post.id"
-                        class="flex items-center justify-between rounded-lg border p-3"
+                        :href="`/${teamSlug}/social/posts/${post.id}/edit`"
+                        class="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50 transition-colors"
                     >
                         <div class="min-w-0 flex-1">
                             <p class="truncate text-sm font-medium">
@@ -246,7 +265,7 @@ defineOptions({
                         <Badge :class="statusColor(post.status)" variant="outline">
                             {{ post.status }}
                         </Badge>
-                    </div>
+                    </Link>
                 </div>
             </CardContent>
         </Card>

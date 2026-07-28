@@ -7,6 +7,7 @@ use App\Models\SocialMedia;
 use App\Models\SocialNotification;
 use App\Models\SocialPost;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PostPublisher
 {
@@ -56,14 +57,12 @@ class PostPublisher
             $maxRetries = config('social.publishing.max_retries', 3);
 
             $post->update([
-                'status' => $retryCount >= $maxRetries ? 'failed' : 'scheduled',
+                'status' => 'failed',
                 'failure_reason' => $e->getMessage(),
                 'retry_count' => $retryCount,
             ]);
 
-            if ($retryCount >= $maxRetries) {
-                $this->notifyUser($post->user_id, 'post_failed', 'Post Failed', "Your post failed to publish after {$maxRetries} attempts: {$e->getMessage()}");
-            }
+            $this->notifyUser($post->user_id, 'post_failed', 'Post Failed', "Your post failed to publish: {$e->getMessage()}");
 
             throw $e;
         }
@@ -89,18 +88,16 @@ class PostPublisher
         }
 
         $firstMedia = $media->first();
+        $filePath = Storage::disk('social')->path($firstMedia->file_path);
 
         if ($firstMedia->type === 'image') {
-            $data['url'] = $this->getMediaUrl($firstMedia);
-
-            return $this->facebook->post("{$pageId}/photos", $account, $data);
+            return $this->facebook->upload("{$pageId}/photos", $account, $filePath, 'source', $data);
         }
 
         if ($firstMedia->type === 'video') {
-            $data['file_url'] = $this->getMediaUrl($firstMedia);
             $data['title'] = $post->caption ?? 'Video';
 
-            return $this->facebook->post("{$pageId}/videos", $account, $data);
+            return $this->facebook->upload("{$pageId}/videos", $account, $filePath, 'source', $data);
         }
 
         return $this->facebook->post("{$pageId}/feed", $account, $data);
@@ -113,11 +110,17 @@ class PostPublisher
      */
     private function publishToInstagram(SocialPost $post, SocialAccount $account): array
     {
-        $containerResponse = $this->createInstagramContainer($post, $account);
+        $igAccountId = $account->instagram_account_id;
+
+        if (! $igAccountId) {
+            throw new \RuntimeException('No Instagram Business Account linked to this Facebook page. Please reconnect your account from the Accounts page to link an Instagram account.');
+        }
+
+        $containerResponse = $this->createInstagramContainer($post, $account, $igAccountId);
 
         $containerId = $containerResponse['id'];
 
-        $result = $this->facebook->post("{$account->page_id}/media_publish", $account, [
+        $result = $this->facebook->post("{$igAccountId}/media_publish", $account, [
             'creation_id' => $containerId,
         ]);
 
@@ -129,7 +132,7 @@ class PostPublisher
      *
      * @return array<string, mixed>
      */
-    private function createInstagramContainer(SocialPost $post, SocialAccount $account): array
+    private function createInstagramContainer(SocialPost $post, SocialAccount $account, string $igAccountId): array
     {
         $media = $post->media->first();
 
@@ -137,12 +140,13 @@ class PostPublisher
             throw new \RuntimeException('Instagram posts require at least one media item');
         }
 
+        $filePath = Storage::disk('social')->path($media->file_path);
+
         $data = [
-            'image_url' => $this->getMediaUrl($media),
             'caption' => $post->caption ?? '',
         ];
 
-        return $this->facebook->post("{$account->page_id}/media", $account, $data);
+        return $this->facebook->upload("{$igAccountId}/media", $account, $filePath, 'source', $data);
     }
 
     /**

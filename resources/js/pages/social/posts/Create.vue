@@ -84,7 +84,7 @@ defineOptions({
 <template>
     <Head title="Create Post" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 p-6">
         <div>
             <h2 class="text-xl font-semibold tracking-tight">Create Post</h2>
             <p class="text-sm text-muted-foreground">

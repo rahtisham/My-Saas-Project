@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Send, Plus, Pencil, Trash2, Clock, CheckCircle2, XCircle, ExternalLink } from '@lucide/vue';
+import { Send, Plus, Pencil, Trash2, FileVideo, LoaderCircle } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -58,6 +58,20 @@ const page = usePage<{ currentTeam: Team }>();
 const teamSlug = computed(() => page.props.currentTeam.slug);
 
 const confirmingDelete = ref<number | null>(null);
+const publishingPostId = ref<number | null>(null);
+
+const handlePublish = (post: Post) => {
+    publishingPostId.value = post.id;
+    router.post(
+        `/${teamSlug.value}/social/posts/${post.id}/publish`,
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                publishingPostId.value = null;
+            },
+        },
+    );
+};
 
 const handleDelete = (post: Post) => {
     if (confirmingDelete.value === post.id) {
@@ -105,7 +119,26 @@ defineOptions({
 <template>
     <Head title="Posts" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 p-6">
+        <!-- Publishing progress banner -->
+        <Transition
+            enter-active-class="transition-all duration-200 ease-out"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition-all duration-150 ease-in"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-2"
+        >
+            <div
+                v-if="publishingPostId !== null"
+                class="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300"
+            >
+                <LoaderCircle class="h-4 w-4 animate-spin" />
+                <span class="font-medium">Publishing to Facebook...</span>
+                <span class="text-blue-500">This may take a moment while we upload your content.</span>
+            </div>
+        </Transition>
+
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
@@ -165,15 +198,26 @@ defineOptions({
                         :key="post.id"
                         class="grid grid-cols-12 items-center gap-4 border-b px-6 py-4 last:border-0 hover:bg-muted/30 transition-colors"
                     >
-                        <!-- Content -->
+                        <!-- Content + Media Thumbnails -->
                         <div class="col-span-4 min-w-0">
                             <p class="truncate text-sm font-medium">
                                 {{ post.caption || 'No caption' }}
                             </p>
-                            <div v-if="post.media.length > 0" class="flex gap-1 mt-1">
-                                <Badge variant="secondary" class="text-xs">
-                                    {{ post.media.length }} file(s)
-                                </Badge>
+                            <div v-if="post.media.length > 0" class="flex items-center gap-1.5 mt-1.5">
+                                <template v-for="(item, idx) in post.media.slice(0, 4)" :key="item.id">
+                                    <img
+                                        v-if="item.type === 'image'"
+                                        :src="item.url"
+                                        :alt="item.fileName"
+                                        class="h-8 w-8 rounded-md object-cover ring-1 ring-border"
+                                    />
+                                    <div v-else class="flex h-8 w-8 items-center justify-center rounded-md bg-muted ring-1 ring-border">
+                                        <FileVideo class="h-3.5 w-3.5 text-muted-foreground" />
+                                    </div>
+                                </template>
+                                <span v-if="post.media.length > 4" class="text-xs text-muted-foreground">
+                                    +{{ post.media.length - 4 }}
+                                </span>
                             </div>
                         </div>
 
@@ -238,12 +282,17 @@ defineOptions({
                                                 variant="ghost"
                                                 size="sm"
                                                 class="h-8 w-8 p-0 text-green-600 hover:text-green-700"
-                                                @click="router.post(`/${teamSlug}/social/posts/${post.id}/publish`, { preserveScroll: true })"
+                                                :disabled="publishingPostId === post.id"
+                                                @click="handlePublish(post)"
                                             >
-                                                <Send class="h-3.5 w-3.5" />
+                                                <LoaderCircle
+                                                    v-if="publishingPostId === post.id"
+                                                    class="h-3.5 w-3.5 animate-spin"
+                                                />
+                                                <Send v-else class="h-3.5 w-3.5" />
                                             </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent>Publish</TooltipContent>
+                                        <TooltipContent>{{ publishingPostId === post.id ? 'Publishing...' : 'Publish' }}</TooltipContent>
                                     </Tooltip>
 
                                     <Tooltip>

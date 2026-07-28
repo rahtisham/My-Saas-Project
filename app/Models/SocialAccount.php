@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string $platform_user_id
  * @property string $name
  * @property string|null $page_id
+ * @property string|null $instagram_account_id
  * @property string $access_token
  * @property Carbon|null $token_expires_at
  * @property string|null $profile_picture_url
@@ -27,7 +28,7 @@ use Illuminate\Support\Carbon;
  * @property-read Team $team
  * @property-read Collection<int, SocialPost> $posts
  */
-#[Fillable(['team_id', 'platform', 'platform_user_id', 'name', 'page_id', 'access_token', 'token_expires_at', 'profile_picture_url', 'is_active'])]
+#[Fillable(['team_id', 'platform', 'platform_user_id', 'name', 'page_id', 'instagram_account_id', 'access_token', 'token_expires_at', 'profile_picture_url', 'is_active'])]
 class SocialAccount extends Model
 {
     /** @use HasFactory<SocialAccountFactory> */

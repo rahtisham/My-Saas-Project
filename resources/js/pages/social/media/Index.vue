@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Image, Plus, Trash2, Upload } from '@lucide/vue';
+import { Image, Plus, Trash2, Upload, FileVideo } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -63,7 +63,7 @@ defineOptions({
 <template>
     <Head title="Media Library" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 p-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
@@ -136,7 +136,7 @@ defineOptions({
                     <div
                         v-for="item in media"
                         :key="item.id"
-                        class="group relative overflow-hidden rounded-lg border bg-muted"
+                        class="group relative overflow-hidden rounded-lg border bg-muted ring-1 ring-border/50 hover:ring-primary/50 transition-all cursor-pointer"
                     >
                         <div class="aspect-square">
                             <img
@@ -145,13 +145,16 @@ defineOptions({
                                 :alt="item.fileName"
                                 class="h-full w-full object-cover"
                             />
-                            <div v-else class="flex h-full items-center justify-center">
-                                <Image class="h-8 w-8 text-muted-foreground" />
+                            <div v-else class="flex h-full items-center justify-center bg-muted/80">
+                                <FileVideo class="h-8 w-8 text-muted-foreground" />
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors">
-                            <div class="absolute right-2 top-2 hidden group-hover:flex gap-1">
-                                <Badge variant="secondary" class="text-xs">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute inset-x-0 bottom-0 p-3">
+                                <p class="truncate text-xs font-medium text-white">{{ item.fileName }}</p>
+                            </div>
+                            <div class="absolute right-2 top-2 flex gap-1">
+                                <Badge variant="secondary" class="text-[10px] bg-white/20 text-white border-0 backdrop-blur-sm">
                                     {{ item.type }}
                                 </Badge>
                                 <Button
@@ -159,7 +162,7 @@ defineOptions({
                                     variant="destructive"
                                     size="sm"
                                     class="h-7 w-7 p-0"
-                                    @click="handleDelete(item)"
+                                    @click.stop="handleDelete(item)"
                                 >
                                     <Trash2 class="h-3.5 w-3.5" />
                                 </Button>
@@ -168,13 +171,13 @@ defineOptions({
                                     variant="destructive"
                                     size="sm"
                                     class="h-7 px-2 text-xs"
-                                    @click="handleDelete(item)"
+                                    @click.stop="handleDelete(item)"
                                 >
                                     Confirm
                                 </Button>
                             </div>
                         </div>
-                        <div class="p-2">
+                        <div class="px-2.5 py-2">
                             <p class="truncate text-xs text-muted-foreground">{{ item.fileName }}</p>
                         </div>
                     </div>

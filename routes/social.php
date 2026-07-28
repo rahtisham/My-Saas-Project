@@ -20,6 +20,8 @@ Route::prefix('{current_team}/social')->name('social.')->middleware(['auth', 've
     Route::get('accounts/redirect', [SocialAccountController::class, 'redirect'])->name('accounts.redirect');
     Route::get('accounts/callback', [SocialAccountController::class, 'callback'])->name('accounts.callback');
     Route::delete('accounts/{account}', [SocialAccountController::class, 'destroy'])->name('accounts.destroy');
+    Route::post('accounts/{account}/test', [SocialAccountController::class, 'testToken'])->name('accounts.testToken');
+    Route::post('accounts/test-token', [SocialAccountController::class, 'testTokenRaw'])->name('accounts.testTokenRaw');
 
     // Media
     Route::get('media', [SocialMediaController::class, 'index'])->name('media.index');

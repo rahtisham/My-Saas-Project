@@ -104,7 +104,7 @@ defineOptions({
 <template>
     <Head title="Campaigns" />
 
-    <div class="flex flex-col space-y-6">
+    <div class="flex flex-col space-y-6 p-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>

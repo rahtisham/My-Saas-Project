@@ -9,6 +9,7 @@ use App\Models\SocialAccount;
 use App\Models\SocialMedia;
 use App\Models\SocialPost;
 use App\Models\Team;
+use App\Services\Social\Facebook\PostPublisher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -179,9 +180,15 @@ class SocialPostController extends Controller
     {
         Gate::authorize('publish', $post);
 
-        PublishSocialPost::dispatch($post);
+        $post->update(['retry_count' => 0, 'status' => 'draft']);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Post is being published.')]);
+        try {
+            app(PostPublisher::class)->publish($post);
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('Post published successfully.')]);
+        } catch (\Throwable $e) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('Publish failed: :reason', ['reason' => $e->getMessage()])]);
+        }
 
         return to_route('social.posts.index', ['current_team' => $currentTeam->slug]);
     }
